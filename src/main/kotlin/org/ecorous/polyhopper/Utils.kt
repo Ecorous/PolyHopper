@@ -22,14 +22,6 @@ object Utils {
             .replace("{username}", playerContext.username)
     }
 
-    fun getMessageModeMessage(username: String, displayName: String, content: String): String {
-        return PolyHopper.CONFIG.message.messageFormat
-            .replace("{username}", username)
-            .replace("{displayName}", displayName)
-            .replace("{text}", content)
-    }
-
-
     fun getInGameMessage(message: String, username: String): Text {
         val ingameFormat = PolyHopper.CONFIG.bot.ingameFormat
 
@@ -59,15 +51,6 @@ object Utils {
         }
     }
 
-
-    fun getMaxPlayerCount(): Int {
-        return PolyHopper.server!!.maxPlayerCount
-    }
-
-    fun getCurrentPlayerCount(): Int {
-        return PolyHopper.server!!.currentPlayerCount
-    }
-
     fun getPlayerCount(): String {
         return "${PolyHopper.server!!.playerManager.currentPlayerCount}/${PolyHopper.server!!.playerManager.maxPlayerCount}"
     }
@@ -79,7 +62,7 @@ object Utils {
             var messageResult = message
             val userMentionPattern = """(<@!?([0-9]{16,20})>)""".toRegex()
             for (match in userMentionPattern.findAll(message)) {
-                var value = match.value
+                val value = match.value
                 val id = Snowflake(value.replace("<@", "").replace(">", ""))
                 val user = HopperBot.bot.kordRef.getGuildOrThrow(Snowflake(PolyHopper.CONFIG.bot.guildId))
                     .getMember(id)

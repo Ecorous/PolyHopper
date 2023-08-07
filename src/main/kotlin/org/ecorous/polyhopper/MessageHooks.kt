@@ -4,10 +4,11 @@ import com.kotlindiscord.kord.extensions.DISCORD_BLURPLE
 import com.kotlindiscord.kord.extensions.DISCORD_GREEN
 import com.kotlindiscord.kord.extensions.DISCORD_RED
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Style
 import net.minecraft.text.Text
 import org.ecorous.polyhopper.HopperBot.sendEmbed
 import org.ecorous.polyhopper.HopperBot.sendMinecraftMessage
+import org.ecorous.polyhopper.PolyHopper.getDiscordContext
+import org.ecorous.polyhopper.helpers.ConsoleContext
 
 object MessageHooks {
 
@@ -51,21 +52,25 @@ object MessageHooks {
     }
 
     fun onChatMessageSent(player: ServerPlayerEntity, message: Text) {
-        sendMinecraftMessage(player.displayName.string, player.uuidAsString, player.displayName.string, message)
+        sendMinecraftMessage(player.getDiscordContext(), message)
         // Example: Player56 said: "Hello World!"
-        PolyHopper.LOGGER.info(player.displayName.string + " said: \"${message}\"")
+        PolyHopper.LOGGER.debug(player.displayName.string + " said: \"${message}\"")
     }
 
     fun onMeCommand(player: ServerPlayerEntity?, message: String) {
+        val context = player?.getDiscordContext() ?: ConsoleContext
+
         sendEmbed {
-            title = "* ${(player?.displayName?.string ?: "Server")} *${message}*"
+            title = "* ${context.displayName} *${message}*"
             color = DISCORD_BLURPLE
         }
     }
 
     fun onSayCommand(player: ServerPlayerEntity?, message: String) {
+        val context = player?.getDiscordContext() ?: ConsoleContext
+
         sendEmbed {
-            title =  "[${(player?.displayName?.string ?: "Server")}] ${message}"
+            title =  "[${context.displayName}] ${message}"
             color = DISCORD_BLURPLE
         }
     }

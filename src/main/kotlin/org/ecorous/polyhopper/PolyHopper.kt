@@ -13,6 +13,11 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlinx.coroutines.runBlocking
+import net.minecraft.server.network.ServerPlayerEntity
+import org.ecorous.polyhopper.helpers.FabricTailorContextFactory
+import org.ecorous.polyhopper.helpers.PlayerContext
+import org.ecorous.polyhopper.helpers.PlayerContextFactory
+import org.ecorous.polyhopper.helpers.VanillaContextFactory
 import org.quiltmc.loader.api.QuiltLoader
 import java.io.File
 
@@ -31,6 +36,10 @@ object PolyHopper : ModInitializer, CoroutineScope {
         }
     """
 
+    override val coroutineContext = Dispatchers.Default
+
+    lateinit var playerContextFactory : PlayerContextFactory
+
     override fun onInitialize(mod: ModContainer) {
         if (CONFIG.bot.accountLinking) {
             if (!linkedAccountsPath.exists()) {
@@ -40,26 +49,40 @@ object PolyHopper : ModInitializer, CoroutineScope {
             linkedAccounts = Gson().fromJson(linkedAccountsPath.readText(), LinkedAccounts::class.java)
         }
 
+        playerContextFactory = if (QuiltLoader.isModLoaded("fabrictailor")) {
+            FabricTailorContextFactory
+        } else {
+            VanillaContextFactory
+        }
+
         ServerLifecycleEvents.READY.register {
             server = it
+
             runBlocking {
                 HopperBot.init()
             }
+
             launch {
                 HopperBot.bot.start()
             }
+
             MessageHooks.onServerStarted()
         }
 
         ServerLifecycleEvents.STOPPING.register {
             server = null
+
             MessageHooks.onServerShutdown()
+
             runBlocking {
                 HopperBot.bot.stop()
             }
+
             if (CONFIG.bot.accountLinking) Utils.writeLinkedAccounts(linkedAccounts!!)
         }
     }
 
-    override val coroutineContext = Dispatchers.Default
+    fun ServerPlayerEntity.getDiscordContext(): PlayerContext {
+        return playerContextFactory.getContext(this)
+    }
 }

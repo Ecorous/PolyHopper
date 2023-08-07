@@ -21,6 +21,8 @@ qkl = { module = "org.quiltmc.quilt-kotlin-libraries:quilt-kotlin-libraries", ve
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "loader" }
 quilt_mappings = { module = "org.quiltmc:quilt-mappings", version.ref = "mappings" }
 
+fabric_tailor = { group = "maven.modrinth", name = "fabrictailor", version = "2.1.2" }
+
 [bundles]
 quilted_fabric_api = ["qfapi", "qfapi_deprecated"]
 

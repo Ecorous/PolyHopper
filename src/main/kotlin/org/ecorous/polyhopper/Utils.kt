@@ -4,6 +4,7 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.coroutines.runBlocking
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import org.ecorous.polyhopper.helpers.PlayerContext
 import org.quiltmc.qkl.library.text.buildText
 import java.util.*
 
@@ -13,19 +14,12 @@ object Utils {
 
     fun writeLinkedAccounts(linkedAccounts: LinkedAccounts) {
         PolyHopper.linkedAccountsPath.writeText(PolyHopper.gson.toJson(linkedAccounts))
-
     }
 
-    fun getWebhookUsername(displayName: String, username: String): String {
+    fun getWebhookUsername(playerContext: PlayerContext): String {
         return PolyHopper.CONFIG.webhook.nameFormat
-            .replace("{displayName}", displayName)
-            .replace("{username}", username)
-    }
-
-    fun getPlayerAvatarUrl(uuid: String, username: String): String {
-        return PolyHopper.CONFIG.webhook.playerAvatarUrl
-            .replace("{uuid}", uuid)
-            .replace("{username}", username)
+            .replace("{displayName}", playerContext.displayName)
+            .replace("{username}", playerContext.username)
     }
 
     fun getMessageModeMessage(username: String, displayName: String, content: String): String {

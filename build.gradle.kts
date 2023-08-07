@@ -24,6 +24,20 @@ repositories {
 	// for more information about repositories.
 	maven("https://oss.sonatype.org/content/repositories/snapshots")
 	maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+
+	repositories {
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = "Modrinth"
+					url = uri("https://api.modrinth.com/maven")
+				}
+			}
+			filter {
+				includeGroup("maven.modrinth")
+			}
+		}
+	}
 }
 
 
@@ -62,6 +76,8 @@ dependencies {
 	// modImplementation(libs.bundles.qfapi) // If you wish to use the deprecated Fabric API modules
 
 	modImplementation(libs.qkl)
+
+	modCompileOnly(libs.fabric.tailor)
 }
 
 val includeBlacklist = setOf<String>(

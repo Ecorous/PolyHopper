@@ -6,6 +6,9 @@ import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.runBlocking
 import net.minecraft.text.Text
 import org.ecorous.polyhopper.extensions.MainExtension
+import org.ecorous.polyhopper.helpers.DiscordMessageSender
+import org.ecorous.polyhopper.helpers.ConsoleContext
+import org.ecorous.polyhopper.helpers.PlayerContext
 
 object HopperBot {
 
@@ -37,15 +40,15 @@ object HopperBot {
         }
     }
 
-    fun sendMinecraftMessage(displayName: String, uuid: String, username: String, text: Text) {
-        sendMessage(Utils.minecraftTextToDiscordMessage(text), username, uuid, displayName)
+    fun sendMinecraftMessage(playerContext: PlayerContext, text: Text) {
+        sendMessage(Utils.minecraftTextToDiscordMessage(text), playerContext)
     }
 
-    fun sendEmbed(username: String = "Server", body: EmbedBuilder.() -> Unit) {
-        messageSender.sendEmbed(username, body)
+    fun sendEmbed(playerContext: PlayerContext = ConsoleContext, body: EmbedBuilder.() -> Unit) {
+        messageSender.sendEmbed(playerContext, body)
     }
 
-    fun sendMessage(message: String, username: String = "", uuid: String = "", displayName: String = "", avatarUrl: String = "") {
-        messageSender.sendMessage(message, username, uuid, displayName, avatarUrl)
+    fun sendMessage(message: String, playerContext: PlayerContext) {
+        messageSender.sendMessage(message, playerContext)
     }
 }

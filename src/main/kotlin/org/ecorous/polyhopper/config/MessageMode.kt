@@ -2,7 +2,7 @@ package org.ecorous.polyhopper.config
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import dev.kord.common.entity.Snowflake
-import org.ecorous.polyhopper.DiscordMessageSender
+import org.ecorous.polyhopper.helpers.DiscordMessageSender
 import org.ecorous.polyhopper.PolyHopper
 
 enum class MessageMode {

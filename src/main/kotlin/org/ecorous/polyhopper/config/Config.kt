@@ -62,7 +62,7 @@ class Config : WrappedConfig() {
         val playerAvatarUrl: String = "https://crafatar.com/renders/head/{uuid}"
 
         @Comment("The url for player webhook image when using fabric tailor, can substitute {skin_id}")
-        val fabricTailorAvatarUrl: String = "https://mc-heads.net/avatar/{{skin_id}}"
+        val fabricTailorAvatarUrl: String = "https://mc-heads.net/head/{skin_id}"
 
         @Comment("The url for server webhook image, can substitute in {uuid} or {username}.")
         val serverAvatarUrl: String = "https://cdn.ecorous.org/blackhole.png"

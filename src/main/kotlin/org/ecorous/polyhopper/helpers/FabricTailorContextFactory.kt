@@ -6,7 +6,7 @@ import org.samo_lego.fabrictailor.casts.TailoredPlayer
 object FabricTailorContextFactory : PlayerContextFactory {
     override fun getContext(player: ServerPlayerEntity): PlayerContext {
         if (player is TailoredPlayer) {
-            if (player.skinValue != null) {
+            if (player.lastSkinChange != 0L) { // This doesn't work when rejoining
                 return PlayerContext(player.uuidAsString, player.gameProfile.name, player.displayName.string, player.skinId)
             }
         }

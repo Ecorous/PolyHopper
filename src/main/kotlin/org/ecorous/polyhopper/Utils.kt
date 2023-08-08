@@ -4,7 +4,7 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.coroutines.runBlocking
 import net.minecraft.text.Style
 import net.minecraft.text.Text
-import org.ecorous.polyhopper.helpers.PlayerContext
+import org.ecorous.polyhopper.helpers.ChatCommandContext
 import org.quiltmc.qkl.library.text.buildText
 import java.util.*
 
@@ -16,10 +16,10 @@ object Utils {
         PolyHopper.linkedAccountsPath.writeText(PolyHopper.gson.toJson(linkedAccounts))
     }
 
-    fun getWebhookUsername(playerContext: PlayerContext): String {
+    fun getWebhookUsername(context: ChatCommandContext): String {
         return PolyHopper.CONFIG.webhook.nameFormat
-            .replace("{displayName}", playerContext.displayName)
-            .replace("{username}", playerContext.username)
+            .replace("{displayName}", context.displayName)
+            .replace("{username}", context.username)
     }
 
     fun getInGameMessage(message: String, username: String): Text {

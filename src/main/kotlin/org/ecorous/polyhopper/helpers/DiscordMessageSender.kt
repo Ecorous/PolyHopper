@@ -20,13 +20,13 @@ import java.lang.IllegalStateException
 sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowflake, val threadId: Snowflake?) : CoroutineScope {
     override val coroutineContext = Dispatchers.Default
 
-    abstract fun sendEmbed(playerContext: PlayerContext, body: EmbedBuilder.() -> Unit)
+    abstract fun sendEmbed(context: ChatCommandContext, body: EmbedBuilder.() -> Unit)
 
-    protected abstract fun sendMessageInternal(message: String, playerContext: PlayerContext)
+    protected abstract fun sendMessageInternal(message: String, context: ChatCommandContext)
 
-    fun sendMessage(message: String, playerContext: PlayerContext) {
+    fun sendMessage(message: String, context: ChatCommandContext) {
         if (passesProxyBlacklist(message)) {
-            sendMessageInternal(message, playerContext)
+            sendMessageInternal(message, context)
         }
     }
 
@@ -34,32 +34,32 @@ sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowfla
         return !PolyHopper.CONFIG.bot.minecraftProxyBlacklist.any { it.isNotEmpty() && message.startsWith(it) }
     }
 
-    protected fun getAvatarUrl(playerContext: PlayerContext): String {
-        return when(playerContext) {
+    protected fun getAvatarUrl(context: ChatCommandContext): String {
+        return when(context) {
             ConsoleContext, CommandOutputContext -> PolyHopper.CONFIG.webhook.serverAvatarUrl
             else -> {
-                if (playerContext.skinId != null) {
-                    PolyHopper.CONFIG.webhook.fabricTailorAvatarUrl.replace("{skin_id}", playerContext.skinId)
+                if (context.skinId != null) {
+                    PolyHopper.CONFIG.webhook.fabricTailorAvatarUrl.replace("{skin_id}", context.skinId)
                 } else {
-                    PolyHopper.CONFIG.webhook.playerAvatarUrl.replace("{uuid}", playerContext.uuid).replace("{username}", playerContext.username)
+                    PolyHopper.CONFIG.webhook.playerAvatarUrl.replace("{uuid}", context.uuid).replace("{username}", context.username)
                 }
             }
         }
     }
 
     class MessageSender(bot: ExtensibleBot, channelId: Snowflake, threadId: Snowflake?) : DiscordMessageSender(bot, channelId, threadId) {
-        override fun sendEmbed(playerContext: PlayerContext, body: EmbedBuilder.() -> Unit) {
+        override fun sendEmbed(context: ChatCommandContext, body: EmbedBuilder.() -> Unit) {
             launch {
                 getChannel().createEmbed(body)
             }
         }
 
-        override fun sendMessageInternal(message: String, playerContext: PlayerContext) {
+        override fun sendMessageInternal(message: String, context: ChatCommandContext) {
             launch {
                 getChannel().createMessage(
                     PolyHopper.CONFIG.message.messageFormat
-                        .replace("{username}", playerContext.username)
-                        .replace("{displayName}", playerContext.displayName)
+                        .replace("{username}", context.username)
+                        .replace("{displayName}", context.displayName)
                         .replace("{text}", message)
                 )
             }
@@ -72,21 +72,21 @@ sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowfla
     }
 
     class WebhookSender(bot: ExtensibleBot, channelId: Snowflake, threadId: Snowflake?) : DiscordMessageSender(bot, channelId, threadId) {
-        override fun sendEmbed(playerContext: PlayerContext, body: EmbedBuilder.() -> Unit) {
+        override fun sendEmbed(context: ChatCommandContext, body: EmbedBuilder.() -> Unit) {
             launch {
                 usingWebhook {
                     avatarUrl = getAvatarUrl(ConsoleContext)
-                    if (playerContext != ConsoleContext) username = Utils.getWebhookUsername(playerContext)
+                    if (context != ConsoleContext) username = Utils.getWebhookUsername(context)
                     embed(body)
                 }
             }
         }
 
-        override fun sendMessageInternal(message: String, playerContext: PlayerContext) {
+        override fun sendMessageInternal(message: String, context: ChatCommandContext) {
             launch {
                 usingWebhook {
-                    avatarUrl = getAvatarUrl(playerContext)
-                    username = Utils.getWebhookUsername(playerContext)
+                    avatarUrl = getAvatarUrl(context)
+                    username = Utils.getWebhookUsername(context)
                     content = message
                 }
             }

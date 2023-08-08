@@ -8,7 +8,7 @@ import net.minecraft.text.Text
 import org.ecorous.polyhopper.extensions.MainExtension
 import org.ecorous.polyhopper.helpers.DiscordMessageSender
 import org.ecorous.polyhopper.helpers.ConsoleContext
-import org.ecorous.polyhopper.helpers.PlayerContext
+import org.ecorous.polyhopper.helpers.ChatCommandContext
 
 object HopperBot {
 
@@ -40,15 +40,15 @@ object HopperBot {
         }
     }
 
-    fun sendMinecraftMessage(playerContext: PlayerContext, text: Text) {
-        sendMessage(Utils.minecraftTextToDiscordMessage(text), playerContext)
+    fun sendMinecraftMessage(context: ChatCommandContext, text: Text) {
+        sendMessage(Utils.minecraftTextToDiscordMessage(text), context)
     }
 
-    fun sendEmbed(playerContext: PlayerContext = ConsoleContext, body: EmbedBuilder.() -> Unit) {
-        messageSender.sendEmbed(playerContext, body)
+    fun sendEmbed(context: ChatCommandContext = ConsoleContext, body: EmbedBuilder.() -> Unit) {
+        messageSender.sendEmbed(context, body)
     }
 
-    fun sendMessage(message: String, playerContext: PlayerContext) {
-        messageSender.sendMessage(message, playerContext)
+    fun sendMessage(message: String, context: ChatCommandContext) {
+        messageSender.sendMessage(message, context)
     }
 }

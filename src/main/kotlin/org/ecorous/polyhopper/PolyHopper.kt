@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.network.ServerPlayerEntity
 import org.ecorous.polyhopper.helpers.FabricTailorContextFactory
-import org.ecorous.polyhopper.helpers.PlayerContext
-import org.ecorous.polyhopper.helpers.PlayerContextFactory
+import org.ecorous.polyhopper.helpers.ChatCommandContext
+import org.ecorous.polyhopper.helpers.ChatCommandContextFactory
 import org.ecorous.polyhopper.helpers.VanillaContextFactory
 import org.quiltmc.loader.api.QuiltLoader
 import java.io.File
@@ -38,7 +38,7 @@ object PolyHopper : ModInitializer, CoroutineScope {
 
     override val coroutineContext = Dispatchers.Default
 
-    lateinit var playerContextFactory : PlayerContextFactory
+    lateinit var chatCommandContextFactory : ChatCommandContextFactory
 
     override fun onInitialize(mod: ModContainer) {
         if (CONFIG.bot.accountLinking) {
@@ -49,7 +49,7 @@ object PolyHopper : ModInitializer, CoroutineScope {
             linkedAccounts = Gson().fromJson(linkedAccountsPath.readText(), LinkedAccounts::class.java)
         }
 
-        playerContextFactory = if (QuiltLoader.isModLoaded("fabrictailor")) {
+        chatCommandContextFactory = if (QuiltLoader.isModLoaded("fabrictailor")) {
             FabricTailorContextFactory
         } else {
             VanillaContextFactory
@@ -82,7 +82,7 @@ object PolyHopper : ModInitializer, CoroutineScope {
         }
     }
 
-    fun ServerPlayerEntity.getDiscordContext(): PlayerContext {
-        return playerContextFactory.getContext(this)
+    fun ServerPlayerEntity.getDiscordContext(): ChatCommandContext {
+        return chatCommandContextFactory.getContext(this)
     }
 }

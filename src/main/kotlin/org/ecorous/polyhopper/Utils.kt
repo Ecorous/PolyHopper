@@ -1,6 +1,10 @@
 package org.ecorous.polyhopper
 
 import dev.kord.common.entity.Snowflake
+import eu.pb4.placeholders.api.ParserContext
+import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1
+import eu.pb4.placeholders.api.parsers.NodeParser
+import eu.pb4.placeholders.api.parsers.TextParserV1
 import kotlinx.coroutines.runBlocking
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -11,6 +15,8 @@ import java.util.*
 object Utils {
 
     private const val OBFUSCATION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+    val PARSER: NodeParser = NodeParser.merge(TextParserV1.SAFE, MarkdownLiteParserV1.ALL)
+    val PARSER_CONTEXT: ParserContext = ParserContext.of()
 
     fun writeLinkedAccounts(linkedAccounts: LinkedAccounts) {
         PolyHopper.linkedAccountsPath.writeText(PolyHopper.gson.toJson(linkedAccounts))
@@ -55,22 +61,44 @@ object Utils {
         return "${PolyHopper.server!!.playerManager.currentPlayerCount}/${PolyHopper.server!!.playerManager.maxPlayerCount}"
     }
 
+
     fun discordMessageToMinecraftText(message: String): Text {
         //TODO()
-        var result: Text = Text.of(message)
+        var result: Text
         runBlocking {
             var messageResult = message
             val userMentionPattern = """(<@!?([0-9]{16,20})>)""".toRegex()
+            val channelMentionPattern = """(<#([0-9]{16,20})>)""".toRegex()
+            val emojiMentionPattern = """(<a?:([a-zA-Z]{2,32}):[0-9]{16,20}>)""".toRegex()
             for (match in userMentionPattern.findAll(message)) {
                 val value = match.value
                 val id = Snowflake(value.replace("<@", "").replace(">", ""))
-                val user = HopperBot.bot.kordRef.getGuildOrThrow(Snowflake(PolyHopper.CONFIG.bot.guildId))
+                val user = HopperBot.bot.kordRef.getGuild(Snowflake(PolyHopper.CONFIG.bot.guildId))
                     .getMember(id)
-                val username = "@" + user.displayName
+                val username = "@" + user.effectiveName
 
-                messageResult = messageResult.replace(match.value, "§6$username§r")
-                result = Text.literal(messageResult)
+                messageResult = messageResult.replace(value, "<gold><hover:show_text:'$id'>$username</hover></gold>")
             }
+            for (match in channelMentionPattern.findAll(message)) {
+                val value = match.value
+                val id = Snowflake(value.replace("<#", "").replace(">", ""))
+                var channelName: String
+                var hoverText: String = id.toString()
+                val channel = HopperBot.bot.kordRef.getChannel(id)
+                if (channel == null) {
+                    channelName = "unknown"
+                } else {
+                    channelName = channel.data.name.value!!
+                }
+                messageResult =
+                    messageResult.replace(value, "t<gold><hover:show_text:'$hoverText'>#$channelName</hover></gold>".trimIndent().trim())
+            }
+            for (match in emojiMentionPattern.findAll(message)) {
+                val name = match.value.substringAfter(":").substringBefore(":")
+                val id = match.value.substringAfterLast(":").replace(">", "")
+                messageResult = messageResult.replace(match.value, "<gold><hover:show_text:'$id'>:$name:</hover></gold>")
+            }
+            result = PARSER.parseText(messageResult, PARSER_CONTEXT)
         }
         return result
     }

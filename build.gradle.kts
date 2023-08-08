@@ -24,7 +24,6 @@ repositories {
 	// for more information about repositories.
 	maven("https://oss.sonatype.org/content/repositories/snapshots")
 	maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
-
 	repositories {
 		exclusiveContent {
 			forRepository {
@@ -38,6 +37,7 @@ repositories {
 			}
 		}
 	}
+	maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
 }
 
 
@@ -76,8 +76,10 @@ dependencies {
 	// modImplementation(libs.bundles.qfapi) // If you wish to use the deprecated Fabric API modules
 
 	modImplementation(libs.qkl)
-
 	modCompileOnly(libs.fabric.tailor)
+
+	include(libs.placeholder.api)
+	modImplementation(libs.placeholder.api)
 }
 
 val includeBlacklist = setOf<String>(
@@ -91,7 +93,8 @@ val includeBlacklist = setOf<String>(
 	"org.jetbrains.kotlin:kotlin-stdlib-common",
 	"org.jetbrains.kotlin:kotlin-stdlib-jdk7",
 	"org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-	"org.slf4j:slf4j-api"
+	"org.slf4j:slf4j-api",
+	"com.ibm.icu:icu4j"
 )
 
 afterEvaluate {

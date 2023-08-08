@@ -36,7 +36,7 @@ sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowfla
 
     protected fun getAvatarUrl(playerContext: PlayerContext): String {
         return when(playerContext) {
-            ConsoleContext -> PolyHopper.CONFIG.webhook.serverAvatarUrl
+            ConsoleContext, CommandOutputContext -> PolyHopper.CONFIG.webhook.serverAvatarUrl
             else -> {
                 if (playerContext.skinId != null) {
                     PolyHopper.CONFIG.webhook.fabricTailorAvatarUrl.replace("{skin_id}", playerContext.skinId)

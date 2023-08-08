@@ -190,13 +190,15 @@ class MainExtension : Extension() {
             action {
                 if (shouldSendMessageToMinecraft(event)) {
                     val server = PolyHopper.server!!
+                    val proxyName = event.pkMessage.member?.displayName
+                    val proxyTag = event.pkMessage.system?.tag
+                    val displayName = if (proxyName != null && proxyTag != null) {
+                        "$proxyName $proxyTag"
+                    } else proxyName ?: event.message.data.author.username
+
                     server.execute {
-                        // note: display name doesn't include system tag.
                         server.playerManager.broadcastSystemMessage(
-                            //Text.literal("PolyHopper - <${event.pkMessage.member?.displayName ?: "???"}> ${event.message.content}"),
-                            event.pkMessage.member?.displayName?.let {
-                                getInGameMessage(event.message.content, it)
-                            },
+                            getInGameMessage(event.message.content, displayName),
                             false
                         )
                     }

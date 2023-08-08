@@ -2,15 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "org.ecorous.polyhopper.mixin",
+  "plugin": "org.ecorous.polyhopper.PolyHopperMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "FabricTailorWackCompatMixin",
     "PlayerAdvancementMixin",
     "PlayerDeathMixin",
     "PlayerJoinAndCommandMixin",
     "PlayerLeaveAndChatMessageMixin"
-  ],
-  "client": [
-    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

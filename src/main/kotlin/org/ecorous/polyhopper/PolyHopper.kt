@@ -14,7 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.network.ServerPlayerEntity
-import org.ecorous.polyhopper.helpers.FabricTailorContextFactory
+import org.ecorous.polyhopper.compat.fabrictailor.FabricTailorContextFactory
 import org.ecorous.polyhopper.helpers.ChatCommandContext
 import org.ecorous.polyhopper.helpers.ChatCommandContextFactory
 import org.ecorous.polyhopper.helpers.VanillaContextFactory

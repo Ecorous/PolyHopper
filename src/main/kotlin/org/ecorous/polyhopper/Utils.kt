@@ -84,20 +84,42 @@ object Utils {
         return "${PolyHopper.server!!.playerManager.currentPlayerCount}/${PolyHopper.server!!.playerManager.maxPlayerCount}"
     }
 
+
     fun discordMessageToMinecraftText(message: String): Text {
         //TODO()
         var result: Text
         runBlocking {
             var messageResult = message
             val userMentionPattern = """(<@!?([0-9]{16,20})>)""".toRegex()
+            val channelMentionPattern = """(<#([0-9]{16,20})>)""".toRegex()
+            val emojiMentionPattern = """(<a?:([a-zA-Z]{2,32}):[0-9]{16,20}>)""".toRegex()
             for (match in userMentionPattern.findAll(message)) {
                 var value = match.value
                 val id = Snowflake(value.replace("<@", "").replace(">", ""))
-                val user = HopperBot.bot.kordRef.getGuildOrThrow(Snowflake(PolyHopper.CONFIG.bot.guildId))
+                val user = HopperBot.bot.kordRef.getGuild(Snowflake(PolyHopper.CONFIG.bot.guildId))
                     .getMember(id)
-                val username = "@" + user.displayName
+                val username = "@" + user.effectiveName
 
-                messageResult = messageResult.replace(match.value, "§6$username§r")
+                messageResult = messageResult.replace(value, "<gold><hover:show_text:'$id'>$username</hover></gold>")
+            }
+            for (match in channelMentionPattern.findAll(message)) {
+                val value = match.value
+                val id = Snowflake(value.replace("<#", "").replace(">", ""))
+                var channelName: String
+                var hoverText: String = id.toString()
+                val channel = HopperBot.bot.kordRef.getChannel(id)
+                if (channel == null) {
+                    channelName = "unknown"
+                } else {
+                    channelName = channel.data.name.value!!
+                }
+                messageResult =
+                    messageResult.replace(value, "t<gold><hover:show_text:'$hoverText'>#$channelName</hover></gold>".trimIndent().trim())
+            }
+            for (match in emojiMentionPattern.findAll(message)) {
+                val name = match.value.substringAfter(":").substringBefore(":")
+                val id = match.value.substringAfterLast(":").replace(">", "")
+                messageResult = messageResult.replace(match.value, "<gold><hover:show_text:'$id'>:$name:</hover></gold>")
             }
             result = PARSER.parseText(messageResult, PARSER_CONTEXT)
         }

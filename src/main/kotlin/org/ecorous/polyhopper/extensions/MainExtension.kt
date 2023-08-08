@@ -215,7 +215,7 @@ class MainExtension : Extension() {
 
                         server.execute {
                             server.playerManager.broadcastSystemMessage(
-                                getInGameMessage(event.message.content, author.displayName),
+                                getInGameMessage(event.message.content, author.effectiveName),
                                 false
                             )
                         }

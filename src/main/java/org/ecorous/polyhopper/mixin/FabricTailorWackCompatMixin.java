@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerLoginNetworkHandler.class)
 public class FabricTailorWackCompatMixin {
 	@Shadow
-	private @Nullable GameProfile profile;
+	@Nullable GameProfile profile;
 
 	@Inject(
 		method = "acceptPlayer()V",

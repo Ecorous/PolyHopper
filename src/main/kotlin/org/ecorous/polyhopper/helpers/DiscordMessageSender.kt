@@ -35,15 +35,14 @@ sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowfla
     }
 
     protected fun getAvatarUrl(context: ChatCommandContext): String {
-        return when(context) {
-            ConsoleContext, CommandOutputContext -> PolyHopper.CONFIG.webhook.serverAvatarUrl
-            else -> {
-                if (context.skinId != null) {
-                    PolyHopper.CONFIG.webhook.fabricTailorAvatarUrl.replace("{skin_id}", context.skinId)
-                } else {
-                    PolyHopper.CONFIG.webhook.playerAvatarUrl.replace("{uuid}", context.uuid).replace("{username}", context.username)
-                }
+        return if (context.isPlayer()) {
+            if (context.skinId != null) {
+                PolyHopper.CONFIG.webhook.fabricTailorAvatarUrl.replace("{skin_id}", context.skinId)
+            } else {
+                PolyHopper.CONFIG.webhook.playerAvatarUrl.replace("{uuid}", context.uuid).replace("{username}", context.username)
             }
+        } else {
+            PolyHopper.CONFIG.webhook.serverAvatarUrl
         }
     }
 
@@ -76,7 +75,7 @@ sealed class DiscordMessageSender(val bot: ExtensibleBot, val channelId: Snowfla
             launch {
                 usingWebhook {
                     avatarUrl = getAvatarUrl(ConsoleContext)
-                    if (context != ConsoleContext) username = Utils.getWebhookUsername(context)
+                    if (context.isPlayer()) username = Utils.getWebhookUsername(context)
                     embed(body)
                 }
             }

@@ -9,3 +9,7 @@ data class ChatCommandContext(
 
 val ConsoleContext = ChatCommandContext("", "Server", "Server", null)
 val CommandOutputContext = ChatCommandContext("", "Command Output", "Command Output", null)
+
+fun ChatCommandContext.isPlayer() : Boolean {
+    return this != ConsoleContext && this != CommandOutputContext
+}

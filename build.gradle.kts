@@ -79,7 +79,9 @@ dependencies {
 	modCompileOnly(libs.fabric.tailor)
 
 	include(libs.placeholder.api)
-	modImplementation(libs.placeholder.api)
+	modImplementation(libs.placeholder.api) {
+		exclude(group = "net.fabricmc")
+	}
 }
 
 val includeBlacklist = setOf<String>(

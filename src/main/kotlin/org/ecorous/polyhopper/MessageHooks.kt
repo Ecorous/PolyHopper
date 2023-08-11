@@ -3,6 +3,7 @@ package org.ecorous.polyhopper
 import com.kotlindiscord.kord.extensions.DISCORD_BLURPLE
 import com.kotlindiscord.kord.extensions.DISCORD_GREEN
 import com.kotlindiscord.kord.extensions.DISCORD_RED
+import com.kotlindiscord.kord.extensions.DISCORD_YELLOW
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import org.ecorous.polyhopper.HopperBot.sendEmbed
@@ -82,6 +83,12 @@ object MessageHooks {
         }
     }
 
+    fun onServerStarting() {
+        sendEmbed {
+            title = "Server starting!"
+            color = DISCORD_YELLOW
+        }
+    }
     fun onServerStarted() {
         sendEmbed {
             title = "Server started!"

@@ -65,6 +65,8 @@ object PolyHopper : ModInitializer, CoroutineScope {
             launch {
                 HopperBot.bot.start()
             }
+
+            MessageHooks.onServerStarting()
         }
 
         ServerLifecycleEvents.READY.register {

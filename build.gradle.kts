@@ -96,7 +96,7 @@ val includeBlacklist = setOf<String>(
 	"org.jetbrains.kotlin:kotlin-stdlib-jdk7",
 	"org.jetbrains.kotlin:kotlin-stdlib-jdk8",
 	"org.slf4j:slf4j-api",
-	"com.ibm.icu:icu4j"
+//	"com.ibm.icu:icu4j" // Commenting this out to make it obvious, we need this otherwise our app commands fail to sync with discord.
 )
 
 afterEvaluate {

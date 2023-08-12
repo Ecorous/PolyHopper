@@ -5,7 +5,7 @@ import org.ecorous.polyhopper.helpers.ChatCommandContext
 import org.ecorous.polyhopper.helpers.ChatCommandContextFactory
 import org.samo_lego.fabrictailor.casts.TailoredPlayer
 
-object FabricTailorContextFactory : ChatCommandContextFactory {
+object FabricTailorContextFactory : ChatCommandContextFactory() {
     override fun getContext(player: ServerPlayerEntity): ChatCommandContext {
         val skinId : String? = player.let {
             if (it is TailoredPlayer) {
@@ -20,6 +20,6 @@ object FabricTailorContextFactory : ChatCommandContextFactory {
             return@let null
         }
 
-        return return ChatCommandContext(player.uuidAsString, player.gameProfile.name, player.displayName.string, skinId)
+        return return ChatCommandContext(player.uuidAsString, player.gameProfile.name, getDisplayName(player), skinId)
     }
 }

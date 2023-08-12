@@ -41,9 +41,12 @@ object HopperBot {
     }
 
     fun onPlayerCountChange() {
-        runBlocking {
-            bot.kordRef.editPresence {
-                playing("Minecraft with ${Utils.getPlayerCount()} players!")
+        if (PolyHopper.server != null) {
+            val playerCount = Utils.getPlayerCount()
+            runBlocking {
+                bot.kordRef.editPresence {
+                    playing("Minecraft with $playerCount players!")
+                }
             }
         }
     }
